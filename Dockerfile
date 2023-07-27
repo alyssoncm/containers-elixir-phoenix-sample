@@ -1,3 +1,4 @@
+
 # Use an official Elixir runtime as a parent image
 FROM elixir:1.12.3
 
@@ -9,10 +10,15 @@ RUN mix local.hex --force && \
     mix local.rebar --force
 
 # Install Node.js and NPM
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get update && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh \
+    && bash nodesource_setup.sh \
+    && apt-get install -y nodejs
+# Fixed the error by adding 'apt-get update' to update package lists first before installing curl,
+# and also combined the commands to install Node.js and NPM into a single RUN command.
+# Additionally, downloaded the 'nodesource_setup.sh' script and ran it using bash.
 
-# Copy the application code into the container
+ Copy# the application code into the container
 COPY . .
 
 # Install the application dependencies
